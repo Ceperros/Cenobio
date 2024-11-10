@@ -16,6 +16,7 @@ class Scraper:
     def __init__(self, url):
         self.url = url
         self.driver = self._initialize_driver()
+        self.sentiment_analysis = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
     
     def _initialize_driver(self):
         service = Service(ChromeDriverManager().install())
@@ -62,8 +63,8 @@ class Scraper:
             keywords = soup.find('meta', attrs={'name': 'keywords'})
             keywords = keywords['content'] if keywords else 'No keywords found'
             author = soup.select_one('.the-by__permalink')  # Ajustar selector según sea necesario
-            sentiment_analysis = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
-            sentiment = sentiment_analysis(body_text)[0] 
+           
+            sentiment = self.sentiment_analysis(body_text)[0] 
             return {
                 'title': title,
                 'link': link,
