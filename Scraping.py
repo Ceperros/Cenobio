@@ -11,8 +11,7 @@ from transformers import pipeline
 import time
 
 class Scraper:
-
-    sentiment_analysis = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
+  
 
     def __init__(self, url):
         self.url = url
@@ -43,22 +42,28 @@ class Scraper:
 
     def scrape_article(self, link):
         self.driver.get(link)
-        time.sleep(2)  # espera breve para asegurar que el contenido se haya cargado
+        metodos = MethodC()
+       # time.sleep(2)  # espera breve para asegurar que el contenido se haya cargado
         try:
             #Extraccion de datos
             body_element = self.driver.find_element(By.CSS_SELECTOR, '.d-the-single-wrapper__text')
             body_text = body_element.text
             title = self.driver.title
-            description = description['content'] if description else 'No description found'
-            keywords = soup.find('meta', attrs={'name': 'keywords'})
-            keywords = keywords['content'] if keywords else 'No keywords found'
-            date_published = soup.find('meta', attrs={'property': 'article:published_time'})
-            date_published = date_published['content'] if date_published else 'No publication date found'
+            
+            
+           
         
             # Capturar el autor usando BeautifulSoup para analizar el HTML
             soup = BeautifulSoup(self.driver.page_source, 'html.parser')
+            description = soup.find('meta', attrs={'name': 'description'})
+            description = description['content'] if description else 'No description found'
+            date_published = soup.find('meta', attrs={'property': 'article:published_time'})
+            date_published = date_published['content'] if date_published else 'No publication date found'
+            keywords = soup.find('meta', attrs={'name': 'keywords'})
+            keywords = keywords['content'] if keywords else 'No keywords found'
             author = soup.select_one('.the-by__permalink')  # Ajustar selector según sea necesario
-            sentiment = sentiment_analysis(body_text)[0] # type: ignore
+            sentiment_analysis = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
+            sentiment = sentiment_analysis(body_text)[0] 
             return {
                 'title': title,
                 'link': link,
@@ -66,8 +71,8 @@ class Scraper:
                 'description': description,
                 'keywords': keywords,
                 'date_published': date_published,
-                 'author': author.text if author else 'Desconocido',
-                'label': MethodC.asignar_label(body_text),               
+                'author': author.text if author else 'Desconocido',
+                'label': metodos.asignar_label(body_text),              
                 'sentiment': sentiment
             }
         except Exception as e:
